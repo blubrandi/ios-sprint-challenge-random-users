@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Users: Decodable {
+struct Results: Decodable {
 
     var results: [User]
 
