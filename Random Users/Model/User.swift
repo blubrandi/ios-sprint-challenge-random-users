@@ -8,68 +8,61 @@
 
 import Foundation
 
-struct Results: Decodable {
-
+struct Users: Codable {
+    
     var results: [User]
-
+    
     enum CodingKeys: String, CodingKey {
         case results
     }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let results = try container.decode([User].self, forKey: .results)
-        self.results = results
-    }
 }
 
-struct User: Decodable {
+struct User: Codable {
     
     var phone: String
     var name: String
     var email: String
-    var image: String
-    var imageThumbnail: String
+    var image: URL
     
     enum UserCodingKeys: String, CodingKey {
         case phone
         case name
         case email
-        case image
-        case imageThumbnail
+        case picture
+        
+        enum NameCodingKeys: String, CodingKey {
+            case first
+            case last
+        }
+        
+        enum ImageCodingKeys: String, CodingKey {
+            case medium
+            case thumbnail
+        }
+        
     }
-    
-    enum NameCodingKeys: String, CodingKey {
-        case firstName
-        case lastName
-    }
-    
-    enum ImageCodingKeys: String, CodingKey {
-        case medium
-        case thumbnail
-    }
-    
     
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserCodingKeys.self)
         
-        self.phone = try container.decode(String.self, forKey: .phone)
+        let phone = try container.decode(String.self, forKey: .phone)
+        self.phone = phone
         
-        let nameContainer = try container.nestedContainer(keyedBy: NameCodingKeys.self, forKey: .name)
+        let nameContainer = try container.nestedContainer(keyedBy: UserCodingKeys.NameCodingKeys.self, forKey: .name)
         
-        let firstName = try nameContainer.decode(String.self, forKey: .firstName)
-        let lastName = try nameContainer.decode(String.self, forKey: .lastName)
+        let firstName = try nameContainer.decode(String.self, forKey: .first)
+        let lastName = try nameContainer.decode(String.self, forKey: .last)
         
-        self.name = "\(firstName) \(lastName)"
+        let name = "\(firstName) \(lastName)"
+        self.name = name
         
         self.email = try container.decode(String.self, forKey: .email)
         
-        let imageContainer = try container.nestedContainer(keyedBy: ImageCodingKeys.self, forKey: .image)
+        let imageContainer = try container.nestedContainer(keyedBy: UserCodingKeys.ImageCodingKeys.self, forKey: .picture)
         
-        self.image = try imageContainer.decode(String.self, forKey: .medium)
-        self.imageThumbnail = try imageContainer.decode(String.self, forKey: .thumbnail)
-
+        self.image = try imageContainer.decode(URL.self, forKey: .medium)
     }
     
 }
+

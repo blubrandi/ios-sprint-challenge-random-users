@@ -2,23 +2,25 @@
 //  UserTableViewCell.swift
 //  Random Users
 //
-//  Created by Brandi on 12/8/19.
+//  Created by Brandi on 12/9/19.
 //  Copyright © 2019 Erica Sadun. All rights reserved.
 //
 
 import UIKit
 
 class UserTableViewCell: UITableViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    
+    @IBOutlet weak var userImage: UIImageView!
+    @IBOutlet weak var userName: UILabel!
+    
+    var user: User? {
+        didSet {
+            updateViews()
+        }
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    private func updateViews() {
+        guard let user = user else { return }
+        userName.text = user.name
     }
-
 }
